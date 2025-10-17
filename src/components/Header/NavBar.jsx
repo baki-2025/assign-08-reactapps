@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router"; // fixed import
+import { NavLink } from "react-router";
 import logo from "../../assets/logo.png";
 import gitimg from "../../assets/image-git.png";
 

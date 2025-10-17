@@ -42,3 +42,5 @@ const AppDetails = () => {
 };
 
 export default AppDetails;
+
+
