@@ -6,7 +6,7 @@ const AppDetails = () => {
     const [app, setApp] = useState(null);
 
     useEffect(() => {
-        fetch("/data/appsData.json")
+        fetch("/appsData.json")
             .then((res) => res.json())
             .then((data) => {
                 const found = data.find((item) => item.id === Number(id));
