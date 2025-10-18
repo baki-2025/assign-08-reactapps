@@ -6,6 +6,7 @@ import Home from "../pages/Home/Home";
 import Apps from "../pages/Apps/Apps";
 import AppDetails from "../pages/AppDetails/AppDetails";
 import MyInstallation from "../pages/MyInstallation/MyInstallation";
+import ErrorApp from "../pages/ErrorApp/ErrorApp";
 
 
 export const router = createBrowserRouter([
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
                 element: <AppDetails />,
 
             },
+            {
+                path: "*/",
+                element: <ErrorApp />
+            }
         ],
     },
 ]);

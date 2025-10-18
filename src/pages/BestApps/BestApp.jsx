@@ -20,7 +20,7 @@ const BestApps = () => {
     return (
         <div className="p-4 max-w-7xl mx-auto bg-gray-100">
             <h2 className="text-3xl font-bold mb-4 text-center text-black">Trending Apps</h2>
-            <p className="text-center p-4 text-black" >Explore All Trending Apps on the Market developed by us</p>
+            <p className="text-center p-6 text-black" >Explore All Trending Apps on the Market developed by us</p>
 
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

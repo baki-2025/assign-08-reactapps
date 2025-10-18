@@ -5,9 +5,8 @@ const Apps = () => {
     const [apps, setApps] = useState([]);
     const [filteredApps, setFilteredApps] = useState([]);
     const [search, setSearch] = useState("");
-    const [sortOrder, setSortOrder] = useState("none");
 
-    
+    // ✅ Fetch app data
     useEffect(() => {
         fetch("/appsData.json")
             .then((res) => res.json())
@@ -18,58 +17,51 @@ const Apps = () => {
             .catch((err) => console.error("Error loading apps:", err));
     }, []);
 
-    
+    // ✅ Filter by search
     useEffect(() => {
-        const result = apps.filter((app) =>
-            app.title.toLowerCase().includes(search.toLowerCase()) ||
-            app.companyName.toLowerCase().includes(search.toLowerCase())
+        const result = apps.filter(
+            (app) =>
+                app.title.toLowerCase().includes(search.toLowerCase()) ||
+                app.companyName.toLowerCase().includes(search.toLowerCase())
         );
         setFilteredApps(result);
     }, [search, apps]);
 
-    
-    useEffect(() => {
-        let sorted = [...filteredApps];
-        if (sortOrder === "high") {
-            sorted.sort((a, b) => b.ratingAvg - a.ratingAvg);
-        } else if (sortOrder === "low") {
-            sorted.sort((a, b) => a.ratingAvg - b.ratingAvg);
-        }
-        setFilteredApps(sorted);
-    }, [sortOrder]);
+
 
     return (
-        <div className="bg-gray-100 text-black min-h-screen p-6">
-            <h1 className="text-3xl text-center font-bold mb-2">
-                Our All Applications
-            </h1>
-            <p className="text-xl text-center mb-6">
-                Explore all apps developed by us — search, filter, and discover easily.
-            </p>
+        <div className="bg-white text-black min-h-screen py-10 px-6">
+            {/* ---------- Header ---------- */}
+            <div className="text-center mb-8">
+                <h1 className="text-4xl font-bold mb-2">Our All Applications</h1>
+                <p className="text-gray-600 text-lg p-4">
+                    Explore all trending apps on the market developed by us. We code for millions
+                </p>
+            </div>
 
-            {/* 🔍 Search + Sort Controls */}
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 max-w-5xl mx-auto">
+            {/* ---------- Apps Found + Search ---------- */}
+            <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 mb-4 border-b pb-3">
+                {/* Left: Apps Count */}
+                <p className="font-semibold text-gray-700 text-lg">
+                    {filteredApps.length > 0
+                        ? `(${filteredApps.length}) Apps Found`
+                        : "No Apps Found"}
+                </p>
+
+                {/* Right: Search Bar */}
                 <input
                     type="text"
-                    placeholder="Search apps by name or company..."
+                    placeholder="🔍 Search apps..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
                 />
-
-                <select
-                    value={sortOrder}
-                    onChange={(e) => setSortOrder(e.target.value)}
-                    className="w-full md:w-1/4 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                >
-                    <option value="none">Sort by Rating</option>
-                    <option value="high">High → Low</option>
-                    <option value="low">Low → High</option>
-                </select>
             </div>
-            
+
+
+            {/* ---------- App Cards ---------- */}
             {filteredApps.length > 0 ? (
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="max-w-6xl mx-auto grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {filteredApps.map((app) => (
                         <AppCard key={app.id} singleApp={app} />
                     ))}
@@ -84,3 +76,4 @@ const Apps = () => {
 };
 
 export default Apps;
+

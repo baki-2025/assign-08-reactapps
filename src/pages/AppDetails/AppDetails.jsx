@@ -1,46 +1,179 @@
+// import React, { useEffect, useState } from "react";
+// import { useParams } from "react-router";
+// import downloadsIcon from "../../assets/icon-downloads.png";
+// import ratingsIcon from "../../assets/icon-ratings.png";
+// import reviewsIcon from "../../assets/icon-review.png";
+// import app1 from "../../assets/demo-app (1).webp";
+
+
+
+
+
+// const AppDetails = () => {
+//     const { id } = useParams();
+//     const [app, setApp] = useState(null);
+
+//     useEffect(() => {
+//         fetch("/appsData.json")
+//             .then((res) => res.json())
+//             .then((data) => {
+//                 const found = data.find((item) => item.id === Number(id));
+//                 setApp(found);
+//             });
+//     }, [id]);
+
+//     if (!app) return <p className="text-center bg-gray-200 mt-10">Loading...</p>;
+
+//     return (
+//         <div className="p-6 bg-white rounded-xl shadow-lg max-w-3xl mx-auto mt-6">
+//             <img
+//                 src={app1 }
+//                 alt=""
+//                 className="w-[350px] h-[350px] object-cover rounded-xl mb-4"
+//             />
+//             <h2 className=" text-gray-800 mb-2">{app.title}</h2>
+//             <p className="text-gray-600 mb-4">{app.description}</p>
+            
+//             <div className="flex justify-between text-gray-700">
+//                 <div className="flex items-center gap-2">
+//                     <img src={downloadsIcon} alt="Downloads" className="w-5 h-5" />
+//                     <span>9M</span>
+//                 </div>
+//                 <div className="flex items-center gap-2">
+//                     <img src={ratingsIcon} alt="Rating" className="w-5 h-5" />
+//                     <span>{app.ratingAvg}</span>
+//                 </div>
+//                 <div className="flex items-center gap-2">
+//                     <img src={reviewsIcon} alt="Reviews" className="w-5 h-5" />
+//                     <span>{app.reviews}</span>
+//                 </div>
+//             </div>
+//             <button className="bg-green-600  rounded-full w-[239px] h-[52px]"><span>Install Now</span>({app.size}MB)</button>
+
+//         </div>
+        
+//     );
+// };
+
+// export default AppDetails;
+
+
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
+import downloadsIcon from "../../assets/icon-downloads.png";
+import ratingsIcon from "../../assets/icon-ratings.png";
+import reviewsIcon from "../../assets/icon-review.png";
 
 const AppDetails = () => {
-    const { id } = useParams();
-    const [app, setApp] = useState(null);
+  const { id } = useParams();
+  const [app, setApp] = useState(null);
+  const [isInstalled, setIsInstalled] = useState(false);
 
-    useEffect(() => {
-        fetch("/appsData.json")
-            .then((res) => res.json())
-            .then((data) => {
-                const found = data.find((item) => item.id === Number(id));
-                setApp(found);
-            });
-    }, [id]);
+  useEffect(() => {
+    fetch("/appsData.json")
+      .then((res) => res.json())
+      .then((data) => {
+        const found = data.find((item) => item.id === Number(id));
+        setApp(found);
 
-    if (!app) return <p className="text-center p-6">Loading details...</p>;
+        const installed = JSON.parse(localStorage.getItem("installedApps")) || [];
+        setIsInstalled(installed.some((a) => a.id === Number(id)));
+      });
+  }, [id]);
 
-    return (
-        <div className="p-8 bg-gray-50 min-h-screen text-black">
-            <div className="max-w-2xl mx-auto bg-white shadow-md p-6 rounded-xl">
-                <img
-                    src={app.image}
-                    alt={app.title}
-                    className="w-full h-60 object-cover rounded-lg mb-4"
-                />
-                <h2 className="text-3xl font-bold mb-2">{app.title}</h2>
-                <p className="text-gray-600 mb-2">by {app.companyName}</p>
-                <p className="text-gray-700 mb-4">{app.description}</p>
-                <p className="text-yellow-500 font-semibold mb-4">
-                    ⭐ Average Rating: {app.ratingAvg}
-                </p>
-                <button
-                    onClick={() => alert("App installed successfully!")}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                >
-                    Install App
-                </button>
-            </div>
+  if (!app)
+    return <p className="text-center mt-10 text-gray-500">Loading...</p>;
+
+  const handleInstall = () => {
+    if (isInstalled) return;
+
+    const installed = JSON.parse(localStorage.getItem("installedApps")) || [];
+    installed.push(app);
+    localStorage.setItem("installedApps", JSON.stringify(installed));
+    setIsInstalled(true);
+    alert("App installed successfully!");
+  };
+
+  return (
+    <div className="max-w-5xl mx-auto bg-gray-200 shadow-lg rounded-xl p-6 mt-8">
+      {/* Top Section */}
+      <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
+        {/* Left: Image */}
+        <div className="w-40 h-40 md:w-56 md:h-56 bg-gray-100 rounded-lg overflow-hidden">
+          <img
+            src={app.image}
+            alt={app.title}
+            className="w-full h-full object-cover"
+          />
         </div>
-    );
+
+        {/* Right: Details */}
+        <div className="flex-1">
+          <h2 className="text-2xl font-bold text-gray-800">{app.title}</h2>
+          <p className="text-gray-500 text-sm mb-4">
+            Developed by{" "}
+            <span className="text-blue-600">{app.companyName}</span>
+          </p>
+
+          <div className="flex flex-wrap gap-6 mb-4">
+            <div className="flex items-center gap-2">
+              <img src={downloadsIcon} alt="" className="w-5 h-5" />
+              <span className="text-gray-700 font-semibold">
+                {app.downloads}M
+              </span>
+              
+            </div>
+
+            <div className="flex items-center gap-2">
+              <img src={ratingsIcon} alt="" className="w-5 h-5" />
+              <span className="text-gray-700 font-semibold">
+                {app.ratingAvg}
+              </span>
+              
+            </div>
+
+            <div className="flex items-center gap-2">
+              <img src={reviewsIcon} alt="" className="w-5 h-5" />
+              <span className="text-gray-700 font-semibold">{app.reviews}K</span>
+              
+            </div>
+          </div>
+
+          <button
+            onClick={handleInstall}
+            disabled={isInstalled}
+            className={`px-6 py-2 rounded-md text-white font-semibold ${
+              isInstalled
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-600 hover:bg-green-700"
+            }`}
+          >
+            {isInstalled ? "Installed" : `Install Now (${app.size} MB)`}
+          </button>
+        </div>
+      </div>
+
+      {/* Ratings Bar Chart */}
+      <div className="mt-10">
+        <h3 className="text-lg font-semibold text-gray-800 mb-3">Ratings</h3>
+        <ResponsiveContainer width="100%" height={200}>
+          <BarChart data={app.ratings} layout="vertical">
+            <XAxis type="number" hide />
+            <Tooltip />
+            <Bar dataKey="count" fill="#f97316" barSize={25} radius={[4, 4, 4, 4]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Description */}
+      <div className="mt-8">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">Description</h3>
+        <p className="text-gray-600 leading-relaxed">{app.description}</p>
+      </div>
+    </div>
+  );
 };
 
 export default AppDetails;
-
-

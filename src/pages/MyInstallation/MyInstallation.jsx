@@ -1,55 +1,62 @@
 import React, { useEffect, useState } from "react";
 import AppCard from "../../components/AppCard/AppCard";
 
-
 const MyInstallation = () => {
-    const [installedApps, setInstalledApps] = useState([]);
+  const [installedApps, setInstalledApps] = useState([]);
+  const [sortOrder, setSortOrder] = useState("sizeHigh");
 
-    // ✅ Load installed apps from localStorage
-    useEffect(() => {
-        const savedApps = JSON.parse(localStorage.getItem("installedApps")) || [];
-        setInstalledApps(savedApps);
-    }, []);
+  useEffect(() => {
+    const savedApps = JSON.parse(localStorage.getItem("installedApps")) || [];
+    setInstalledApps(savedApps);
+  }, []);
 
-    // ✅ Uninstall handler
-    const handleUninstall = (id) => {
-        const updatedApps = installedApps.filter((app) => app.id !== id);
-        setInstalledApps(updatedApps);
-        localStorage.setItem("installedApps", JSON.stringify(updatedApps));
-    
-    };
+  const handleUninstall = (id) => {
+    if (window.confirm("Are you sure you want to uninstall this app?")) {
+      const updatedApps = installedApps.filter((app) => app.id !== id);
+      setInstalledApps(updatedApps);
+      localStorage.setItem("installedApps", JSON.stringify(updatedApps));
+    }
+  };
 
-    return (
-        <div className="p-6 bg-gray-50 min-h-screen">
-            <h2 className="text-3xl font-bold text-center mb-6">
-                My Installed Applications
-            </h2>
+  const sortedApps = [...installedApps].sort((a, b) => {
+    if (sortOrder === "sizeHigh") return b.size - a.size;
+    if (sortOrder === "sizeLow") return a.size - b.size;
+    return 0;
+  });
 
-            {installedApps.length > 0 ? (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {installedApps.map((app) => (
-                        <div
-                            key={app.id}
-                            className="relative group border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm"
-                        >
-                            <AppCard singleApp={app} />
-                            {/* Uninstall button overlay */}
-                            <button
-                                onClick={() => handleUninstall(app.id)}
-                                className="absolute top-2 right-2 bg-red-500 text-white text-sm px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-all"
-                            >
-                                Uninstall
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <p className="text-center text-gray-600 text-lg">
-                    You haven’t installed any apps yet 😅
-                </p>
-            )}
+  return (
+    <div className="p-6 bg-gray-50 min-h-screen text-center">
+      <h2 className="text-3xl font-bold text-black mb-6">Your Installed Apps</h2>
+      <p className="text-black">Explore All Trending Apps on the Market developed by us</p>
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left: App Cards */}
+        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {sortedApps.map((app) => (
+            <AppCard
+              key={app.id}
+              singleApp={app}
+              onUninstall={() => handleUninstall(app.id)}
+            />
+          ))}
         </div>
-    );
+
+        {/* Right: Sort Dropdown */}
+        <div className="w-full lg:w-64 flex flex-col gap-3">
+          <label className="text-gray-900 font-semibold">Sort By Size:</label>
+          <select
+            className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+          >
+            <option className="text-black" value="sizeHigh">High to Low</option>
+            <option className="text-black" value="sizeLow">Low to High</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default MyInstallation;
+
+

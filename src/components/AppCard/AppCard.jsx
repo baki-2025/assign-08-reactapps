@@ -1,101 +1,62 @@
-// import React from "react";
-// import downloadsIcon from "../../assets/icon-downloads.png";
-// import ratingsIcon from "../../assets/icon-ratings.png";
-
-// const AppCard = ({ singleApp }) => {
-//     const { image, title, rating } = singleApp;
-
-//     return (
-
-
-
-//         <div className="bg-white p-5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between h-full relative">
-//             {/* Top: Image + Title */}
-//             <div className="flex items-center gap-4 mb-4">
-//                 <img
-//                     src={image}
-//                     alt=""
-//                     className="w-20 h-20 object-cover rounded-lg border"
-//                 />
-//                 <h3 className=" text-gray-900">{title}</h3>
-//             </div>
-
-//             {/* Optional middle spacing (content area) */}
-//             <div className="flex-grow"></div>
-
-//             {/* Bottom: Downloads + Rating */}
-//             <div className="absolute bottom-3 left-0 right-0 px-5">
-//                 <div className="flex justify-between items-center border-t pt-3 text-gray-700">
-//                     {/* Downloads */}
-//                     <div className="flex items-center gap-2 text-sm font-medium">
-//                         <img src={downloadsIcon} alt="downloads" className="w-5 h-5" />
-//                         <span>9M</span>
-//                     </div>
-
-//                     {/* Rating */}
-//                     <div className="flex items-center gap-2 text-sm font-semibold text-yellow-500">
-//                         <img src={ratingsIcon} alt="rating" className="w-5 h-5" />
-//                         <span>{rating || "5"}</span>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-
-//     );
-// };
-
-// export default AppCard;
-
 import React from "react";
 import { useNavigate } from "react-router";
 import downloadsIcon from "../../assets/icon-downloads.png";
 import ratingsIcon from "../../assets/icon-ratings.png";
 
-const AppCard = ({ singleApp }) => {
-    const { id, image, title, rating, downloads } = singleApp;
-    const navigate = useNavigate();
 
-    const handleClick = () => {
-        navigate(`/apps/${id}`); // navigate to AppDetails page
-    };
+const AppCard = ({ singleApp, isInstalled }) => {
+  const { id, image, title, description,  ratingAvg } = singleApp;
+  const navigate = useNavigate();
 
-    return (
-        <div
-            onClick={handleClick}
-            className="cursor-pointer bg-white p-5 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between h-full relative"
-        >
-            {/* Top: Image + Title */}
-            <div className="flex items-center gap-4 mb-4">
-                <img
-                    src={image}
-                    alt={title}
-                    className="w-20 h-20 object-cover rounded-lg border"
-                />
-                <h3 className=" text-gray-900">{title}</h3>
-            </div>
+  // Short description
+  const shortDescription =
+    description.length > 40 ? description.substring(0, 40) + "..." : description;
 
-            {/* Optional middle spacing */}
-            <div className="flex-grow"></div>
+  // Navigate to AppDetails when clicked
+  const handleClick = () => {
+    navigate(`/apps/${id}`);
+  };
 
-            {/* Bottom: Downloads + Rating */}
-            <div className="absolute bottom-3 left-0 right-0 px-5">
-                <div className="flex justify-between items-center border-t pt-3 text-gray-700">
-                    {/* Downloads */}
-                    <div className="flex items-center gap-2 text-sm font-medium">
-                        <img src={downloadsIcon} alt="downloads" className="w-5 h-5" />
-                        <span>{downloads?.toLocaleString() || "0"}</span>
-                    </div>
+  return (
+    <div
+      onClick={handleClick}
+      className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer flex flex-col relative"
+    >
+      {/* Image */}
+      <div className="w-full h-40 bg-gray-200 rounded-t-xl overflow-hidden">
+        <img src={image} alt="" className="w-full h-full object-cover" />
+      </div>
 
-                    {/* Rating */}
-                    <div className="flex items-center gap-2 text-sm font-semibold text-yellow-500">
-                        <img src={ratingsIcon} alt="rating" className="w-5 h-5" />
-                        <span>{rating || "5"}</span>
-                    </div>
-                </div>
-            </div>
+      {/* Title + short desc */}
+      <div className="px-3 py-2">
+        <p className="text-gray-800 text-sm truncate">
+          {title} : <span className="text-gray-500">{shortDescription}</span>
+        </p>
+      </div>
+
+      {/* Stats */}
+      <div className="px-3 pb-3 flex justify-between items-center">
+        <div className="flex items-center gap-1">
+          <img src={downloadsIcon} alt="Downloads" className="w-4 h-4" />
+          <span className="text-sm text-gray-500">9M</span>
         </div>
-    );
+        <div className="flex items-center gap-1">
+          <img src={ratingsIcon} alt="Rating" className="w-4 h-4" />
+          <span className="text-sm text-gray-500">{ratingAvg || "N/A"}</span>
+        </div>
+        
+      </div>
+
+      {/* Installed badge */}
+      {isInstalled && (
+        <span className="absolute top-2 right-2 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+          Installed
+        </span>
+      )}
+    </div>
+  );
 };
 
 export default AppCard;
+
 
